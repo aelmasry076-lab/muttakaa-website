@@ -47,7 +47,6 @@
         const { useState, useEffect, useMemo } = React;
 
         // --- INLINE SVG ICONS (The Fix) ---
-        // These replace the external lucide-react library completely.
         
         const IconTemplate = ({ size = 24, className = "", children }) => (
             <svg 
@@ -68,7 +67,7 @@
 
         const Users = (props) => <IconTemplate {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconTemplate>;
         const Heart = (props) => <IconTemplate {...props}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></IconTemplate>;
-        const Handshake = (props) => <IconTemplate {...props}><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m9 11 3 3L22 4"/><path d="M22 4h-4"/><path d="M22 4v4"/><path d="M2 13v6a2 2 0 0 0 2 2h2"/><path d="M6 21a2 2 0 0 0 2-2v-4"/><path d="M2 13a2 2 0 0 1 2-2h2"/><path d="M12 9a6.5 6.5 0 0 0 2 1.5"/></IconTemplate>; // Simplified representation or use 'Briefcase' style if clearer
+        const Handshake = (props) => <IconTemplate {...props}><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m9 11 3 3L22 4"/><path d="M22 4h-4"/><path d="M22 4v4"/><path d="M2 13v6a2 2 0 0 0 2 2h2"/><path d="M6 21a2 2 0 0 0 2-2v-4"/><path d="M2 13a2 2 0 0 1 2-2h2"/><path d="M12 9a6.5 6.5 0 0 0 2 1.5"/></IconTemplate>;
         const MapPin = (props) => <IconTemplate {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconTemplate>;
         const Search = (props) => <IconTemplate {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></IconTemplate>;
         const BarChart3 = (props) => <IconTemplate {...props}><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></IconTemplate>;
@@ -88,12 +87,11 @@
         const User = (props) => <IconTemplate {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></IconTemplate>;
         const Activity = (props) => <IconTemplate {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></IconTemplate>;
 
-        // Fallback Icon component (just in case)
+        // Fallback Icon component
         const FallbackIcon = ({ size = 24, className }) => (
             <div className={`inline-flex items-center justify-center bg-gray-200 text-gray-500 font-bold rounded-full ${className}`} style={{width: size, height: size}}>!</div>
         );
 
-        // Helper to safely render an icon (kept for compatibility with existing code structure)
         const IconRender = ({ icon: IconComponent, size = 24, className = "" }) => {
             if (IconComponent) {
                 return <IconComponent size={size} className={className} />;
@@ -447,6 +445,219 @@
             );
         };
 
+        // --- Impact Dashboard Component ---
+        const ImpactDashboard = () => {
+            const [lang] = useState('ar'); 
+            const t = translations[lang];
+
+            return (
+                <div className="bg-gray-50 py-12 px-4 min-h-screen">
+                <div className="max-w-7xl mx-auto">
+                    <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">{t.impact.title}</h2>
+                    
+                    {/* Updated Stats with Health Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
+                    {[
+                        { label: t.impact.volunteers, val: "1,250", icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
+                        { label: t.impact.beneficiaries, val: "35+", icon: Heart, color: "text-red-500", bg: "bg-red-100" },
+                        { label: t.impact.hours, val: "12K+", icon: Clock, color: "text-green-500", bg: "bg-green-100" },
+                        { label: t.impact.partners, val: "45", icon: Handshake, color: "text-purple-500", bg: "bg-purple-100" },
+                        { label: t.impact.healthCards, val: "25", icon: Activity, color: "text-amber-500", bg: "bg-amber-100" },
+                    ].map((stat, idx) => (
+                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition text-center group">
+                        <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition duration-300`}>
+                            <IconRender icon={stat.icon} size={28} />
+                        </div>
+                        <h3 className="text-3xl font-extrabold text-gray-900 mb-2">{stat.val}</h3>
+                        <p className="text-gray-500 font-medium text-sm">{stat.label}</p>
+                        </div>
+                    ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm">
+                        <h3 className="font-bold mb-6 text-gray-800 text-lg flex items-center gap-2">
+                        <IconRender icon={BarChart3} className="text-teal-600" />
+                        {lang === 'ar' ? 'نمو التطوع (شهري)' : 'Volunteer Growth (Monthly)'}
+                        </h3>
+                        <div className="flex items-end justify-between h-48 px-4 gap-2">
+                        {[40, 65, 45, 80, 55, 90].map((h, i) => (
+                            <div key={i} className="w-full bg-teal-100 rounded-t-lg hover:bg-teal-500 transition-colors relative group" style={{ height: `${h}%` }}>
+                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">{h * 10}</span>
+                            </div>
+                        ))}
+                        </div>
+                        <div className="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col justify-center">
+                        <h3 className="font-bold mb-4 text-gray-800 text-lg">{lang === 'ar' ? 'توزع الخدمات' : 'Service Distribution'}</h3>
+                        <div className="space-y-4">
+                        {[
+                            { label: 'Training', pct: '45%', color: 'bg-blue-500' },
+                            { label: 'Consulting', pct: '30%', color: 'bg-purple-500' },
+                            { label: 'Charity', pct: '25%', color: 'bg-orange-500' },
+                        ].map((item, i) => (
+                            <div key={i}>
+                            <div className="flex justify-between text-sm mb-1 text-gray-600 font-medium">
+                                <span>{item.label}</span>
+                                <span>{item.pct}</span>
+                            </div>
+                            <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                <div className={`h-full ${item.color}`} style={{ width: item.pct }}></div>
+                            </div>
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            );
+        };
+
+        // --- NEW: Portal Component (Added Fix) ---
+        const Portal = () => {
+            const [selectedRole, setSelectedRole] = useState(null);
+            const [showVolunteerForm, setShowVolunteerForm] = useState(false);
+
+            const roles = [
+                { id: 'volunteer', label: 'متطوع', labelEn: 'Volunteer', icon: Heart, color: 'bg-red-100 text-red-600' },
+                { id: 'partner', label: 'شريك', labelEn: 'Partner', icon: Handshake, color: 'bg-blue-100 text-blue-600' },
+                { id: 'provider', label: 'مقدم خدمة', labelEn: 'Service Provider', icon: LayoutDashboard, color: 'bg-purple-100 text-purple-600' },
+            ];
+
+            if (!selectedRole) {
+                return (
+                    <div className="min-h-screen bg-gray-50 py-12 px-4">
+                        <div className="max-w-4xl mx-auto">
+                            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">بوابة المستخدمين</h2>
+                            <p className="text-center text-gray-600 mb-12">اختر نوع حسابك للمتابعة</p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {roles.map((role) => (
+                                    <button
+                                        key={role.id}
+                                        onClick={() => setSelectedRole(role.id)}
+                                        className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col items-center group"
+                                    >
+                                        <div className={`p-4 rounded-full ${role.color} mb-4`}>
+                                            <IconRender icon={role.icon} size={32} />
+                                        </div>
+                                        <h3 className="font-bold text-gray-800 text-lg">{role.label}</h3>
+                                        <p className="text-sm text-gray-500">{role.labelEn}</p>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Volunteer Dashboard
+            if (selectedRole === 'volunteer') {
+                return (
+                    <div className="min-h-screen bg-gray-50 py-8 px-4">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="flex justify-between items-center mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-gray-800">لوحة المتطوع</h2>
+                                    <p className="text-gray-500">مرحباً بك في بوابة المتطوعين</p>
+                                </div>
+                                <button onClick={() => setSelectedRole(null)} className="text-gray-500 hover:text-gray-700 flex items-center gap-2">
+                                    <IconRender icon={LogOut} size={18} />
+                                    <span>تغيير الدور</span>
+                                </button>
+                            </div>
+
+                            {/* Stats Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-teal-600">
+                                            <IconRender icon={Clock} size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">24</p>
+                                            <p className="text-sm text-gray-500">ساعات التطوع</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                                            <IconRender icon={CheckCircle} size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">5</p>
+                                            <p className="text-sm text-gray-500">مهام مكتملة</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-xl shadow-sm">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+                                            <IconRender icon={Activity} size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">نشط</p>
+                                            <p className="text-sm text-gray-500">الحالة</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="bg-white p-6 rounded-xl shadow-sm">
+                                <h3 className="font-bold text-gray-800 mb-4">إجراءات سريعة</h3>
+                                <div className="flex flex-wrap gap-4">
+                                    <button 
+                                        onClick={() => setShowVolunteerForm(true)}
+                                        className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition flex items-center gap-2"
+                                    >
+                                        <IconRender icon={FileText} size={18} />
+                                        تسجيل بيانات التطوع
+                                    </button>
+                                    <button className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition flex items-center gap-2">
+                                        <IconRender icon={Calendar} size={18} />
+                                        عرض الفرص المتاحة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Volunteer Form Modal */}
+                        <VolunteerFormModal isOpen={showVolunteerForm} onClose={() => setShowVolunteerForm(false)} />
+                    </div>
+                );
+            }
+
+            // Partner/Provider Dashboard (Simplified)
+            return (
+                <div className="min-h-screen bg-gray-50 py-8 px-4">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <div className="bg-white p-12 rounded-2xl shadow-sm">
+                            <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 text-teal-600">
+                                <IconRender icon={selectedRole === 'partner' ? Handshake : LayoutDashboard} size={32} />
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                                {selectedRole === 'partner' ? 'بوابة الشركاء' : 'بوابة مقدمي الخدمات'}
+                            </h2>
+                            <p className="text-gray-500 mb-8">هذه البوابة قيد التطوير وستكون متاحة قريباً</p>
+                            <button 
+                                onClick={() => setSelectedRole(null)} 
+                                className="text-teal-600 hover:text-teal-700 font-medium"
+                            >
+                                ← العودة لاختيار الدور
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // --- Main App Component ---
         function MuttakaaApp() {
             const [lang, setLang] = useState('ar');
@@ -684,73 +895,6 @@
                 </div>
                 );
             };
-
-            const ImpactDashboard = () => (
-                <div className="bg-gray-50 py-12 px-4 min-h-screen">
-                <div className="max-w-7xl mx-auto">
-                    <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">{t.impact.title}</h2>
-                    
-                    {/* NEW: Updated Stats with Health Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
-                    {[
-                        { label: t.impact.volunteers, val: "1,250", icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
-                        { label: t.impact.beneficiaries, val: "35+", icon: Heart, color: "text-red-500", bg: "bg-red-100" }, // Updated Value
-                        { label: t.impact.hours, val: "12K+", icon: Clock, color: "text-green-500", bg: "bg-green-100" },
-                        { label: t.impact.partners, val: "45", icon: Handshake, color: "text-purple-500", bg: "bg-purple-100" },
-                        { label: t.impact.healthCards, val: "25", icon: Activity, color: "text-amber-500", bg: "bg-amber-100" }, // New Card
-                    ].map((stat, idx) => (
-                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition text-center group">
-                        <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition duration-300`}>
-                            <IconRender icon={stat.icon} size={28} />
-                        </div>
-                        <h3 className="text-3xl font-extrabold text-gray-900 mb-2">{stat.val}</h3>
-                        <p className="text-gray-500 font-medium text-sm">{stat.label}</p>
-                        </div>
-                    ))}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm">
-                        <h3 className="font-bold mb-6 text-gray-800 text-lg flex items-center gap-2">
-                        <IconRender icon={BarChart3} className="text-teal-600" />
-                        {lang === 'ar' ? 'نمو التطوع (شهري)' : 'Volunteer Growth (Monthly)'}
-                        </h3>
-                        <div className="flex items-end justify-between h-48 px-4 gap-2">
-                        {[40, 65, 45, 80, 55, 90].map((h, i) => (
-                            <div key={i} className="w-full bg-teal-100 rounded-t-lg hover:bg-teal-500 transition-colors relative group" style={{ height: `${h}%` }}>
-                            <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">{h * 10}</span>
-                            </div>
-                        ))}
-                        </div>
-                        <div className="flex justify-between mt-2 text-xs text-gray-400">
-                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col justify-center">
-                        <h3 className="font-bold mb-4 text-gray-800 text-lg">{lang === 'ar' ? 'توزع الخدمات' : 'Service Distribution'}</h3>
-                        <div className="space-y-4">
-                        {[
-                            { label: 'Training', pct: '45%', color: 'bg-blue-500' },
-                            { label: 'Consulting', pct: '30%', color: 'bg-purple-500' },
-                            { label: 'Charity', pct: '25%', color: 'bg-orange-500' },
-                        ].map((item, i) => (
-                            <div key={i}>
-                            <div className="flex justify-between text-sm mb-1 text-gray-600 font-medium">
-                                <span>{item.label}</span>
-                                <span>{item.pct}</span>
-                            </div>
-                            <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                <div className={`h-full ${item.color}`} style={{ width: item.pct }}></div>
-                            </div>
-                            </div>
-                        ))}
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            );
 
             // Main Render
             return (
