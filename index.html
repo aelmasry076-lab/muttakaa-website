@@ -30,45 +30,80 @@
 <body class="bg-gray-50 text-gray-900">
     <div id="root"></div>
 
-    <!-- Scripts loaded in specific order for stability -->
+    <!-- 1. React & ReactDOM (Stable) -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     
-    <!-- 1. React & ReactDOM (Production Versions) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- 2. Lucide Icons (Must be loaded AFTER React) -->
-    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
-
-    <!-- 3. Firebase Compat Libraries -->
+    <!-- 2. Firebase Compat Libraries -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-    <!-- 4. Babel for JSX -->
+    <!-- 3. Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
         // --- Configuration & Setup ---
         const { useState, useEffect, useMemo } = React;
-        
-        // Safe destructuring for Icons
-        // We use a fallback object to prevent crashing if the library fails to load
-        const Icons = window.lucideReact || {};
-        const { 
-            Users, Heart, Handshake, MapPin, Search, BarChart3, 
-            Calendar, ArrowRight, ArrowLeft, Globe, Menu, X, 
-            CheckCircle, Clock, FileText, LayoutDashboard, LogOut,
-            ChevronRight, ChevronLeft, User
-        } = Icons;
 
-        // Fallback Icon component in case Lucide fails entirely
-        const FallbackIcon = ({ size = 24, className }) => (
-            <div className={`inline-block bg-gray-200 rounded-full ${className}`} style={{width: size, height: size}}></div>
+        // --- INLINE SVG ICONS (The Fix) ---
+        // These replace the external lucide-react library completely.
+        
+        const IconTemplate = ({ size = 24, className = "", children }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {children}
+            </svg>
         );
+
+        const Users = (props) => <IconTemplate {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconTemplate>;
+        const Heart = (props) => <IconTemplate {...props}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></IconTemplate>;
+        const Handshake = (props) => <IconTemplate {...props}><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m9 11 3 3L22 4"/><path d="M22 4h-4"/><path d="M22 4v4"/><path d="M2 13v6a2 2 0 0 0 2 2h2"/><path d="M6 21a2 2 0 0 0 2-2v-4"/><path d="M2 13a2 2 0 0 1 2-2h2"/><path d="M12 9a6.5 6.5 0 0 0 2 1.5"/></IconTemplate>; // Simplified representation or use 'Briefcase' style if clearer
+        const MapPin = (props) => <IconTemplate {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconTemplate>;
+        const Search = (props) => <IconTemplate {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></IconTemplate>;
+        const BarChart3 = (props) => <IconTemplate {...props}><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></IconTemplate>;
+        const Calendar = (props) => <IconTemplate {...props}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></IconTemplate>;
+        const ArrowRight = (props) => <IconTemplate {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconTemplate>;
+        const ArrowLeft = (props) => <IconTemplate {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconTemplate>;
+        const Globe = (props) => <IconTemplate {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></IconTemplate>;
+        const Menu = (props) => <IconTemplate {...props}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconTemplate>;
+        const X = (props) => <IconTemplate {...props}><path d="M18 6 6 18"/><path d="m6 6 18 18"/></IconTemplate>;
+        const CheckCircle = (props) => <IconTemplate {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></IconTemplate>;
+        const Clock = (props) => <IconTemplate {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconTemplate>;
+        const FileText = (props) => <IconTemplate {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></IconTemplate>;
+        const LayoutDashboard = (props) => <IconTemplate {...props}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></IconTemplate>;
+        const LogOut = (props) => <IconTemplate {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></IconTemplate>;
+        const ChevronRight = (props) => <IconTemplate {...props}><path d="m9 18 6-6-6-6"/></IconTemplate>;
+        const ChevronLeft = (props) => <IconTemplate {...props}><path d="m15 18-6-6 6-6"/></IconTemplate>;
+        const User = (props) => <IconTemplate {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></IconTemplate>;
+        const Activity = (props) => <IconTemplate {...props}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></IconTemplate>;
+
+        // Fallback Icon component (just in case)
+        const FallbackIcon = ({ size = 24, className }) => (
+            <div className={`inline-flex items-center justify-center bg-gray-200 text-gray-500 font-bold rounded-full ${className}`} style={{width: size, height: size}}>!</div>
+        );
+
+        // Helper to safely render an icon (kept for compatibility with existing code structure)
+        const IconRender = ({ icon: IconComponent, size = 24, className = "" }) => {
+            if (IconComponent) {
+                return <IconComponent size={size} className={className} />;
+            }
+            return <FallbackIcon size={size} className={className} />;
+        };
 
         // Firebase Config
         const firebaseConfig = {
-             apiKey: "", // Left empty intentionally
+             apiKey: "", 
              authDomain: "muttakaa-app.firebaseapp.com",
              projectId: "muttakaa-app",
              storageBucket: "muttakaa-app.appspot.com",
@@ -123,14 +158,16 @@
                 hours: "ساعات التطوع",
                 myRequests: "طلباتي",
                 submitReport: "رفع تقرير",
-                newRequest: "طلب جديد"
+                newRequest: "طلب جديد",
+                registerVolunteer: "تسجيل بيانات التطوع"
                 },
                 impact: {
                 title: "لوحة الأثر",
                 volunteers: "متطوع نشط",
                 beneficiaries: "مستفيد",
                 partners: "شريك استراتيجي",
-                hours: "ساعة عطاء"
+                hours: "ساعة عطاء",
+                healthCards: "بطاقات دعم صحي"
                 }
             },
             en: {
@@ -164,16 +201,250 @@
                 hours: "Volunteer Hours",
                 myRequests: "My Requests",
                 submitReport: "Submit Report",
-                newRequest: "New Request"
+                newRequest: "New Request",
+                registerVolunteer: "Volunteer Registration"
                 },
                 impact: {
                 title: "Impact Dashboard",
                 volunteers: "Active Volunteers",
                 beneficiaries: "Beneficiaries",
                 partners: "Partners",
-                hours: "Giving Hours"
+                hours: "Giving Hours",
+                healthCards: "Health Support Cards"
                 }
             }
+        };
+
+        // --- Volunteer Registration Modal Component ---
+        const VolunteerFormModal = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+
+            const [formData, setFormData] = useState({
+                fullName: '',
+                email: '',
+                phone: '',
+                birthDate: '',
+                specialization: '',
+                availableHours: '',
+                experienceLevel: '',
+                motivation: '',
+                agreeTerms: false
+            });
+
+            const [errors, setErrors] = useState({});
+            const [isSubmitting, setIsSubmitting] = useState(false);
+            const [showSuccess, setShowSuccess] = useState(false);
+
+            // Validation Function
+            const validateForm = () => {
+                const newErrors = {};
+                if (!formData.fullName.trim()) newErrors.fullName = 'الاسم مطلوب';
+                if (!formData.email.trim()) newErrors.email = 'البريد الإلكتروني مطلوب';
+                else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'صيغة البريد غير صحيحة';
+                if (!formData.phone.trim()) newErrors.phone = 'رقم الهاتف مطلوب';
+                if (!formData.specialization) newErrors.specialization = 'اختر التخصص';
+                if (!formData.availableHours) newErrors.availableHours = 'اختر الساعات المتاحة';
+                if (!formData.experienceLevel) newErrors.experienceLevel = 'اختر مستوى الخبرة';
+                if (!formData.agreeTerms) newErrors.agreeTerms = 'يجب الموافقة على الشروط';
+                
+                setErrors(newErrors);
+                return Object.keys(newErrors).length === 0;
+            };
+
+            const handleChange = (e) => {
+                const { name, value, type, checked } = e.target;
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: type === 'checkbox' ? checked : value
+                }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!validateForm()) return;
+
+                setIsSubmitting(true);
+
+                // Save to localStorage
+                const volunteers = JSON.parse(localStorage.getItem('volunteer_registrations') || '[]');
+                volunteers.push({
+                    ...formData,
+                    timestamp: new Date().toISOString(),
+                    status: 'pending'
+                });
+                localStorage.setItem('volunteer_registrations', JSON.stringify(volunteers));
+
+                // Log for debugging
+                console.log('New Volunteer:', formData);
+
+                // Show success
+                setShowSuccess(true);
+                setIsSubmitting(false);
+
+                // Reset form
+                setFormData({
+                    fullName: '', email: '', phone: '', birthDate: '',
+                    specialization: '', availableHours: '', experienceLevel: '',
+                    motivation: '', agreeTerms: false
+                });
+
+                // Close modal after 2 seconds
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    onClose();
+                }, 2000);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 animate-fade-in-up relative">
+                        {/* Header */}
+                        <div className="flex justify-between items-center p-6 border-b">
+                            <h3 className="text-xl font-bold text-gray-800">تسجيل متطوع جديد</h3>
+                            <button onClick={onClose} className="text-gray-500 hover:text-red-500 transition">
+                                <IconRender icon={X} size={24} />
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-6">
+                            {showSuccess ? (
+                                <div className="text-center py-12">
+                                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <IconRender icon={CheckCircle} size={32} />
+                                    </div>
+                                    <h4 className="text-2xl font-bold text-gray-800 mb-2">تم التسجيل بنجاح!</h4>
+                                    <p className="text-gray-600">شكراً لانضمامك إلينا، سنقوم بمراجعة طلبك والتواصل معك قريباً.</p>
+                                </div>
+                            ) : (
+                                <form dir="rtl" className="text-right space-y-4" onSubmit={handleSubmit}>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Full Name */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل <span className="text-red-500">*</span></label>
+                                            <input 
+                                                type="text" name="fullName" value={formData.fullName} onChange={handleChange}
+                                                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.fullName ? 'border-red-500' : 'border-gray-300'}`}
+                                                placeholder="أدخل اسمك الكامل"
+                                            />
+                                            {errors.fullName && <span className="text-red-500 text-xs">{errors.fullName}</span>}
+                                        </div>
+
+                                        {/* Email */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني <span className="text-red-500">*</span></label>
+                                            <input 
+                                                type="email" name="email" value={formData.email} onChange={handleChange}
+                                                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                                                placeholder="example@email.com"
+                                            />
+                                            {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+                                        </div>
+
+                                        {/* Phone */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف <span className="text-red-500">*</span></label>
+                                            <input 
+                                                type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                                                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                                                placeholder="+20 123 456 7890"
+                                            />
+                                            {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
+                                        </div>
+
+                                        {/* Birth Date */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">تاريخ الميلاد</label>
+                                            <input 
+                                                type="date" name="birthDate" value={formData.birthDate} onChange={handleChange}
+                                                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Specialization */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">التخصص <span className="text-red-500">*</span></label>
+                                        <select 
+                                            name="specialization" value={formData.specialization} onChange={handleChange}
+                                            className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.specialization ? 'border-red-500' : 'border-gray-300'}`}
+                                        >
+                                            <option value="">اختر التخصص...</option>
+                                            <option value="case_management">إدارة الحالة</option>
+                                            <option value="psychological">الدعم النفسي</option>
+                                            <option value="training">التدريب المهني</option>
+                                            <option value="admin">إداري</option>
+                                            <option value="other">أخرى</option>
+                                        </select>
+                                        {errors.specialization && <span className="text-red-500 text-xs">{errors.specialization}</span>}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Available Hours */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">الساعات المتاحة أسبوعياً <span className="text-red-500">*</span></label>
+                                            <select 
+                                                name="availableHours" value={formData.availableHours} onChange={handleChange}
+                                                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.availableHours ? 'border-red-500' : 'border-gray-300'}`}
+                                            >
+                                                <option value="">اختر...</option>
+                                                <option value="1-2">1-2 ساعات</option>
+                                                <option value="3-5">3-5 ساعات</option>
+                                                <option value="5-10">5-10 ساعات</option>
+                                                <option value="10+">10+ ساعات</option>
+                                            </select>
+                                            {errors.availableHours && <span className="text-red-500 text-xs">{errors.availableHours}</span>}
+                                        </div>
+
+                                        {/* Experience Level */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">مستوى الخبرة <span className="text-red-500">*</span></label>
+                                            <select 
+                                                name="experienceLevel" value={formData.experienceLevel} onChange={handleChange}
+                                                className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-teal-500 outline-none ${errors.experienceLevel ? 'border-red-500' : 'border-gray-300'}`}
+                                            >
+                                                <option value="">اختر...</option>
+                                                <option value="beginner">مبتدئ</option>
+                                                <option value="intermediate">متوسط</option>
+                                                <option value="advanced">متقدم</option>
+                                            </select>
+                                            {errors.experienceLevel && <span className="text-red-500 text-xs">{errors.experienceLevel}</span>}
+                                        </div>
+                                    </div>
+
+                                    {/* Motivation */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">رسالة التحفيز</label>
+                                        <textarea 
+                                            name="motivation" value={formData.motivation} onChange={handleChange} maxLength={500}
+                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none h-24 resize-none"
+                                            placeholder="لماذا تريد التطوع معنا؟"
+                                        ></textarea>
+                                    </div>
+
+                                    {/* Agree Terms */}
+                                    <div className="flex items-center gap-2">
+                                        <input 
+                                            type="checkbox" name="agreeTerms" checked={formData.agreeTerms} onChange={handleChange}
+                                            id="agreeTerms" className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                                        />
+                                        <label htmlFor="agreeTerms" className="text-sm text-gray-700 select-none">أوافق على شروط الخدمة وسياسة الخصوصية <span className="text-red-500">*</span></label>
+                                    </div>
+                                    {errors.agreeTerms && <span className="text-red-500 text-xs block">{errors.agreeTerms}</span>}
+
+                                    {/* Submit Button */}
+                                    <button 
+                                        type="submit" disabled={isSubmitting}
+                                        className="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-bold py-3 rounded-lg shadow transition transform active:scale-95"
+                                    >
+                                        {isSubmitting ? 'جاري الإرسال...' : 'تسجيل'}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
         };
 
         // --- Main App Component ---
@@ -236,11 +507,11 @@
                         <button onClick={() => navigate('map')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'map' ? 'text-teal-600' : 'text-gray-600 hover:text-teal-600'}`}>{t.nav.map}</button>
                         <button onClick={() => navigate('impact')} className={`px-3 py-2 rounded-md text-sm font-medium ${view === 'impact' ? 'text-teal-600' : 'text-gray-600 hover:text-teal-600'}`}>{t.nav.impact}</button>
                         <button onClick={() => navigate('portal')} className="bg-teal-600 text-white px-5 py-2 rounded-full hover:bg-teal-700 transition shadow-lg flex items-center gap-2">
-                        {User ? <User size={18} /> : <FallbackIcon size={18} />}
+                        <IconRender icon={User} size={18} />
                         {user && userData ? t.auth.welcome : t.nav.portal}
                         </button>
                         <button onClick={toggleLang} className="p-2 text-gray-500 hover:text-teal-600 flex items-center gap-1 font-bold">
-                        {Globe ? <Globe size={18} /> : <FallbackIcon size={18} />}
+                        <IconRender icon={Globe} size={18} />
                         {lang === 'ar' ? 'EN' : 'عربي'}
                         </button>
                     </div>
@@ -248,7 +519,7 @@
                     {/* Mobile Button */}
                     <div className="flex md:hidden items-center">
                         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-gray-600 p-2">
-                        {mobileMenuOpen ? (X ? <X /> : "X") : (Menu ? <Menu /> : "Menu")}
+                        {mobileMenuOpen ? <IconRender icon={X} /> : <IconRender icon={Menu} />}
                         </button>
                     </div>
                     </div>
@@ -301,7 +572,7 @@
                             className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 flex flex-col items-center group"
                             >
                             <div className={`p-4 rounded-full bg-gray-50 mb-4 group-hover:bg-opacity-20 transition ${item.color.replace('text', 'bg')}`}>
-                                {item.icon ? <item.icon className={`w-8 h-8 ${item.color}`} /> : <FallbackIcon className={item.color} />}
+                                <IconRender icon={item.icon} className={`w-8 h-8 ${item.color}`} />
                             </div>
                             <h3 className="font-bold text-gray-800">{item.label}</h3>
                             </button>
@@ -317,7 +588,7 @@
                         <ul className="space-y-3 mb-8 text-start">
                             {[1, 2, 3].map((_, i) => (
                             <li key={i} className="flex items-center gap-3 text-gray-600">
-                                {CheckCircle ? <CheckCircle className="text-teal-500 w-5 h-5 flex-shrink-0" /> : <FallbackIcon size={20} className="text-teal-500" />}
+                                <IconRender icon={CheckCircle} className="text-teal-500 w-5 h-5 flex-shrink-0" size={20} />
                                 <span>
                                 {selection === 'volunteer' && i === 0 && (lang === 'ar' ? 'فرص تطوعية تناسب مهاراتك' : 'Opportunities matching your skills')}
                                 {selection === 'volunteer' && i === 1 && (lang === 'ar' ? 'توثيق لساعاتك التطوعية' : 'Volunteer hours documentation')}
@@ -338,7 +609,7 @@
                             </button>
                             <button onClick={completeWizard} className="px-8 py-3 rounded-lg bg-teal-600 text-white font-bold hover:bg-teal-700 shadow-lg flex items-center gap-2">
                             {t.wizard.next}
-                            {lang === 'ar' ? (ArrowLeft ? <ArrowLeft size={18} /> : "<-") : (ArrowRight ? <ArrowRight size={18} /> : "->")}
+                            {lang === 'ar' ? <IconRender icon={ArrowLeft} size={18} /> : <IconRender icon={ArrowRight} size={18} />}
                             </button>
                         </div>
                         </div>
@@ -365,7 +636,7 @@
                     <div className="max-w-6xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                         <h2 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0 flex items-center gap-2">
-                        {MapPin ? <MapPin className="text-teal-600" /> : <FallbackIcon className="text-teal-600" />}
+                        <IconRender icon={MapPin} className="text-teal-600" />
                         {t.nav.map}
                         </h2>
                         <div className="flex gap-2 bg-white p-2 rounded-lg shadow-sm overflow-x-auto max-w-full">
@@ -386,7 +657,7 @@
                         <div className="md:col-span-2 bg-slate-200 rounded-2xl min-h-[400px] relative overflow-hidden flex items-center justify-center group">
                             <div className="absolute inset-0 bg-gray-300 bg-opacity-30 group-hover:bg-opacity-40 transition"></div>
                             <div className="text-center z-10 p-6 bg-white/90 backdrop-blur rounded-xl shadow-lg">
-                            {MapPin && <MapPin className="w-12 h-12 text-teal-600 mx-auto mb-2" />}
+                            <div className="flex justify-center mb-2"><IconRender icon={MapPin} className="w-12 h-12 text-teal-600" /></div>
                             <p className="font-bold text-gray-700">{lang === 'ar' ? 'خريطة تفاعلية' : 'Interactive Map'}</p>
                             <p className="text-xs text-gray-500">{lang === 'ar' ? 'يمكن دمج Google Maps API هنا' : 'Google Maps API integration spot'}</p>
                             </div>
@@ -399,11 +670,11 @@
                             <div>
                                 <h3 className="font-bold text-gray-800">{s.name}</h3>
                                 <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                                {MapPin && <MapPin size={12} />} {s.loc} • <span className="bg-gray-100 px-2 rounded text-xs">{s.type}</span>
+                                <IconRender icon={MapPin} size={12} /> {s.loc} • <span className="bg-gray-100 px-2 rounded text-xs">{s.type}</span>
                                 </p>
                             </div>
                             <button className="text-teal-600 bg-teal-50 p-2 rounded-full hover:bg-teal-100">
-                                {lang === 'ar' ? (ChevronLeft ? <ChevronLeft /> : "<") : (ChevronRight ? <ChevronRight /> : ">")}
+                                {lang === 'ar' ? <IconRender icon={ChevronLeft} /> : <IconRender icon={ChevronRight} />}
                             </button>
                             </div>
                         ))}
@@ -414,172 +685,26 @@
                 );
             };
 
-            const Portal = () => {
-                if (!userData) {
-                return (
-                    <div className="min-h-[60vh] flex items-center justify-center bg-gray-50 p-4">
-                    <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-                        <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        {User ? <User size={32} /> : <FallbackIcon size={32} />}
-                        </div>
-                        <h2 className="text-2xl font-bold mb-2">{t.auth.loginTitle}</h2>
-                        <p className="text-gray-500 mb-8">{lang === 'ar' ? 'يرجى اختيار نوع حسابك للمتابعة' : 'Please select your account type to continue'}</p>
-                        
-                        <div className="space-y-3">
-                        <button onClick={() => setUserData({ role: 'volunteer' })} className="w-full p-4 border rounded-xl hover:bg-teal-50 hover:border-teal-500 transition flex items-center gap-3">
-                            {Heart && <Heart className="text-red-500" />}
-                            <div className="text-start">
-                            <span className="block font-bold text-gray-800">{t.wizard.volunteer}</span>
-                            </div>
-                        </button>
-                        <button onClick={() => setUserData({ role: 'provider' })} className="w-full p-4 border rounded-xl hover:bg-teal-50 hover:border-teal-500 transition flex items-center gap-3">
-                            {LayoutDashboard && <LayoutDashboard className="text-purple-500" />}
-                            <div className="text-start">
-                            <span className="block font-bold text-gray-800">{t.wizard.provider}</span>
-                            </div>
-                        </button>
-                        </div>
-                    </div>
-                    </div>
-                );
-                }
-
-                if (userData.role === 'volunteer') {
-                return (
-                    <div className="max-w-7xl mx-auto py-8 px-4">
-                    <div className="flex justify-between items-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-800">{lang === 'ar' ? 'لوحة المتطوع' : 'Volunteer Dashboard'}</h2>
-                        <button onClick={() => setUserData(null)} className="text-red-500 flex items-center gap-2 hover:bg-red-50 px-3 py-1 rounded-lg">
-                        {LogOut ? <LogOut size={16} /> : "Logout"} {t.auth.logout}
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-teal-500">
-                        <p className="text-gray-500 text-sm">{t.dash.hours}</p>
-                        <p className="text-3xl font-bold text-gray-900 mt-2">24</p>
-                        </div>
-                        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-orange-500">
-                        <p className="text-gray-500 text-sm">{t.dash.status}</p>
-                        <p className="text-xl font-bold text-orange-600 mt-2">{lang === 'ar' ? 'نشط' : 'Active'}</p>
-                        </div>
-                        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500 md:col-span-2">
-                        <p className="text-gray-500 text-sm mb-2">{lang === 'ar' ? 'الفرص القادمة' : 'Upcoming Opportunities'}</p>
-                        <div className="flex items-center gap-3 bg-blue-50 p-2 rounded-lg">
-                            {Calendar && <Calendar size={20} className="text-blue-600" />}
-                            <span className="text-sm font-medium">{lang === 'ar' ? 'تنظيف الشاطئ - 25 أكتوبر' : 'Beach Cleanup - Oct 25'}</span>
-                            <button className="mr-auto bg-blue-600 text-white text-xs px-3 py-1 rounded">{lang === 'ar' ? 'تأكيد' : 'Confirm'}</button>
-                        </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white rounded-xl shadow-sm p-6">
-                        <h3 className="text-xl font-bold mb-6 border-b pb-2">{lang === 'ar' ? 'المهام الحالية' : 'Current Tasks'}</h3>
-                        <div className="space-y-4">
-                        {[1, 2].map(i => (
-                            <div key={i} className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border rounded-lg hover:bg-gray-50">
-                            <div>
-                                <h4 className="font-bold text-gray-800">{lang === 'ar' ? 'مساعدة في تنظيم ورشة عمل' : 'Help organize workshop'}</h4>
-                                <p className="text-sm text-gray-500">Ticket ID: #VOL-2024-{i}99</p>
-                            </div>
-                            <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold mt-2 md:mt-0">
-                                In Progress
-                            </span>
-                            </div>
-                        ))}
-                        </div>
-                    </div>
-                    </div>
-                );
-                }
-
-                if (userData.role === 'provider') {
-                    return (
-                    <div className="max-w-7xl mx-auto py-8 px-4">
-                        <div className="flex justify-between items-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-800">{lang === 'ar' ? 'بوابة مقدمي الخدمات' : 'Provider Portal'}</h2>
-                        <button onClick={() => setUserData(null)} className="text-red-500 flex items-center gap-2 hover:bg-red-50 px-3 py-1 rounded-lg">
-                            {LogOut ? <LogOut size={16} /> : "Logout"} {t.auth.logout}
-                        </button>
-                        </div>
-            
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="space-y-6">
-                            <div className="bg-white p-6 rounded-xl shadow-sm">
-                            <h3 className="font-bold text-gray-500 text-sm mb-4 uppercase">{lang === 'ar' ? 'نظرة عامة' : 'Overview'}</h3>
-                            <div className="flex justify-between items-center mb-4">
-                                <span>{t.dash.newRequest}</span>
-                                <span className="bg-red-100 text-red-600 font-bold px-2 rounded">5</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span>{lang === 'ar' ? 'الخدمات النشطة' : 'Active Services'}</span>
-                                <span className="font-bold">3</span>
-                            </div>
-                            </div>
-                            
-                            <div className="bg-teal-600 p-6 rounded-xl shadow-lg text-white">
-                                <h3 className="font-bold mb-2">{lang === 'ar' ? 'هل تريد إضافة خدمة؟' : 'Add new Service?'}</h3>
-                                <button className="w-full bg-white text-teal-700 font-bold py-2 rounded-lg mt-2 text-sm hover:bg-gray-100">
-                                {lang === 'ar' ? '+ إضافة خدمة جديدة' : '+ Add Service'}
-                                </button>
-                            </div>
-                        </div>
-            
-                        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm overflow-hidden">
-                            <div className="p-6 border-b flex justify-between items-center">
-                            <h3 className="font-bold text-xl">{lang === 'ar' ? 'طلبات الإحالة الواردة' : 'Incoming Referrals'}</h3>
-                            <div className="flex gap-2">
-                                <button className="p-2 hover:bg-gray-100 rounded text-gray-500">{Search ? <Search size={18} /> : "?"}</button>
-                            </div>
-                            </div>
-                            <div className="divide-y">
-                            {[1, 2, 3].map(req => (
-                                <div key={req} className="p-6 hover:bg-gray-50 transition">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-600">
-                                        U{req}
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-800">{lang === 'ar' ? 'طلب استشارة عائلية' : 'Family Consultation Request'}</h4>
-                                        <p className="text-sm text-gray-500">{lang === 'ar' ? 'من: أحمد محمد' : 'From: Ahmed M.'} • 2 hours ago</p>
-                                    </div>
-                                    </div>
-                                    <div className="flex gap-2">
-                                    <button className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-white hover:border-red-500 hover:text-red-500 transition">{lang === 'ar' ? 'رفض' : 'Decline'}</button>
-                                    <button className="px-3 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700 transition shadow">{lang === 'ar' ? 'قبول' : 'Accept'}</button>
-                                    </div>
-                                </div>
-                                </div>
-                            ))}
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    );
-                }
-
-                return null;
-            };
-
             const ImpactDashboard = () => (
                 <div className="bg-gray-50 py-12 px-4 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">{t.impact.title}</h2>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                    {/* NEW: Updated Stats with Health Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
                     {[
                         { label: t.impact.volunteers, val: "1,250", icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
-                        { label: t.impact.beneficiaries, val: "5,430", icon: Heart, color: "text-red-500", bg: "bg-red-100" },
+                        { label: t.impact.beneficiaries, val: "35+", icon: Heart, color: "text-red-500", bg: "bg-red-100" }, // Updated Value
                         { label: t.impact.hours, val: "12K+", icon: Clock, color: "text-green-500", bg: "bg-green-100" },
                         { label: t.impact.partners, val: "45", icon: Handshake, color: "text-purple-500", bg: "bg-purple-100" },
+                        { label: t.impact.healthCards, val: "25", icon: Activity, color: "text-amber-500", bg: "bg-amber-100" }, // New Card
                     ].map((stat, idx) => (
-                        <div key={idx} className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition text-center group">
-                        <div className={`w-16 h-16 ${stat.bg} ${stat.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition duration-300`}>
-                            {stat.icon ? <stat.icon size={32} /> : <FallbackIcon size={32} />}
+                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition text-center group">
+                        <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition duration-300`}>
+                            <IconRender icon={stat.icon} size={28} />
                         </div>
-                        <h3 className="text-4xl font-extrabold text-gray-900 mb-2">{stat.val}</h3>
-                        <p className="text-gray-500 font-medium">{stat.label}</p>
+                        <h3 className="text-3xl font-extrabold text-gray-900 mb-2">{stat.val}</h3>
+                        <p className="text-gray-500 font-medium text-sm">{stat.label}</p>
                         </div>
                     ))}
                     </div>
@@ -587,7 +712,7 @@
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="bg-white p-6 rounded-2xl shadow-sm">
                         <h3 className="font-bold mb-6 text-gray-800 text-lg flex items-center gap-2">
-                        {BarChart3 && <BarChart3 className="text-teal-600" />}
+                        <IconRender icon={BarChart3} className="text-teal-600" />
                         {lang === 'ar' ? 'نمو التطوع (شهري)' : 'Volunteer Growth (Monthly)'}
                         </h3>
                         <div className="flex items-end justify-between h-48 px-4 gap-2">
@@ -638,11 +763,29 @@
                             <div className="py-16 text-center">
                             <h3 className="text-2xl font-bold mb-8 text-gray-800">{lang === 'ar' ? 'لماذا مُتكأ؟' : 'Why Muttakaa?'}</h3>
                             <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-                                {[1, 2, 3].map(i => (
-                                <div key={i} className="bg-white p-6 rounded-xl shadow-sm">
-                                    <div className="w-12 h-12 bg-teal-100 rounded-full mb-4 mx-auto"></div>
-                                    <h4 className="font-bold mb-2">{lang === 'ar' ? 'أثر مستدام' : 'Sustainable Impact'}</h4>
-                                    <p className="text-sm text-gray-500">منصة متكاملة لخدمة المجتمع وتحقيق التنمية.</p>
+                                {[
+                                    {
+                                        title: lang === 'ar' ? "مجتمع متكامل" : "Integrated Community",
+                                        desc: lang === 'ar' ? "نربط المتطوعين ومقدمي الخدمات والمستفيدين في منصة واحدة لتعزيز التعاون الفعال وتسهيل الوصول للخدمات." : "Connecting volunteers, providers, and beneficiaries in one platform to foster effective collaboration and access to services.",
+                                        icon: Users
+                                    },
+                                    {
+                                        title: lang === 'ar' ? "شفافية وأثر" : "Transparency & Impact",
+                                        desc: lang === 'ar' ? "نقدم لوحات بيانات وتقارير لحظية تقيس حجم العطاء والأثر المجتمعي بدقة عالية لضمان المصداقية." : "Providing real-time dashboards and reports to measure giving volume and social impact with high precision ensuring credibility.",
+                                        icon: BarChart3
+                                    },
+                                    {
+                                        title: lang === 'ar' ? "تنمية مستدامة" : "Sustainable Development",
+                                        desc: lang === 'ar' ? "ندعم المبادرات التي تحقق نمواً مستمراً وتمكيناً حقيقياً للفرد وللمجتمع ككل، لمستقبل أفضل." : "Supporting initiatives that achieve continuous growth and true empowerment for individuals and society as a whole.",
+                                        icon: Globe
+                                    }
+                                ].map((feature, i) => (
+                                <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                                    <div className="w-12 h-12 bg-teal-100 rounded-full mb-4 mx-auto flex items-center justify-center text-teal-600">
+                                        <IconRender icon={feature.icon} size={24} />
+                                    </div>
+                                    <h4 className="font-bold mb-2 text-gray-800">{feature.title}</h4>
+                                    <p className="text-sm text-gray-500 leading-relaxed">{feature.desc}</p>
                                 </div>
                                 ))}
                             </div>
